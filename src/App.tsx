@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useRef} from "react";
+import "./App.css";
+import AppleLogo from "./applePixels.png";
+import Monitor from "./oldMonitor.png";
+
+const canvasX = 1000;
+const canvasy = 1000;
+const initialSnake = [[4,10], [4,10]];
+const initialApple = [14,10];
+const scale = 50;
+const timeDelay = 100;
 
 function App() {
+  const canvasRef = useRef(null);
+  const [snake, setSnake] = useState(initialSnake);
+  const [apple, setApple] = useState(initialApple);
+  const [direction, setDirection] = useState([0, -1]);
+  const [delay, setDelay] = useState<number | null>(null);
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <img src={AppleLogo} alt="fruit" width="30" />
+      <img src={Monitor} alt="fruit" width="30" />
     </div>
-  );
+  )
 }
 
 export default App;
