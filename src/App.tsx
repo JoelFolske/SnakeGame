@@ -33,6 +33,13 @@ function App() {
     return false
   }
 
+
+  function changeDirection(e: React.KeyboardEvent<HTMLDivElement>) {
+    switch (e.key)
+  }
+
+
+
   function appleAte(newSnake: number[][]) {
     let coord = apple.map(() => Math.floor(Math.random() * canvasX / scale))
     if(newSnake[0][0] === apple[0] && newSnake[0][1] === apple[1]) {
