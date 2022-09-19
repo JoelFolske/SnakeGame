@@ -4,7 +4,7 @@ import AppleLogo from "./applePixels.png";
 import Monitor from "./oldMonitor.png";
 
 const canvasX = 1000;
-const canvasy = 1000;
+const canvasY = 1000;
 const initialSnake = [[4,10], [4,10]];
 const initialApple = [14,10];
 const scale = 50;
@@ -25,6 +25,12 @@ function App() {
     <div>
       <img src={AppleLogo} alt="fruit" width="30" />
       <img src={Monitor} alt="fruit" width="30" />
+      <canvas className="playArea" ref={canvasRef} width={`${canvasX}px`} height={`${canvasY}px`} />
+      <button onClick={play} className="playButton">Play</button>
+      <div className="scoreBox">
+        <h2>Score: {score</h2>
+        <h2>High Score: {localStorage.getItem("snakeScore")}</h2>
+      </div>
     </div>
   )
 }
