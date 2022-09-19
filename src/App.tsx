@@ -30,6 +30,18 @@ function App() {
     for(const s of snake) {
       if(head[0] === s[0] && head[1] === s[1]) return true
     }
+    return false
+  }
+
+  function appleAte(newSnake: number[][]) {
+    let coord = apple.map(() => Math.floor(Math.random() * canvasX / scale))
+    if(newSnake[0][0] === apple[0] && newSnake[0][1] === apple[1]) {
+      let newApple = coord
+      setScore(score + 1)
+      setApple(newApple)
+      return true
+    }
+    return false
   }
 
 
