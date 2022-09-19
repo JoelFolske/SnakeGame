@@ -23,6 +23,31 @@ function App() {
 
   useInterval(() => runGame(), delay )
 
+  function checkCollision(head: number[]) {
+    for (let i = 0; i < head.length; i++) {
+      if(head[i] < 0 || head[i] * scale >= canvasX) return true
+    }
+    for(const s of snake) {
+      if(head[0] === s[0] && head[1] === s[1]) return true
+    }
+  }
+
+
+  function runGame() {
+    const newSnake = [...snake]
+    const newSnakeHead = [newSnake[0][0] + direction[0], newSnake[0][1] = direction[1]]
+    newSnake.unshift(newSnakeHead)
+    if(checkCollision(newSnakeHead)) {
+      setDelay(null)
+      setGameOver(true)
+      handleSetScore()
+    }
+    if(!appleAte(newSnake)) {
+      newSnake.pop()
+    }
+    setSnake(newSnake)
+  }
+
   return (
     <div onKeyDown={(e) => changeDirection(e) }>
       <img src={AppleLogo} alt="fruit" width="30" />
