@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, { useState, useRef } from "react";
 import { reduceEachLeadingCommentRange } from "typescript";
 import "./App.css";
 import AppleLogo from "./applePixels.png";
@@ -7,8 +7,11 @@ import useInterval from "./useInterval";
 
 const canvasX = 1000;
 const canvasY = 1000;
-const initialSnake = [[4,10], [4,10]];
-const initialApple = [14,10];
+const initialSnake = [
+  [4, 10],
+  [4, 10],
+];
+const initialApple = [14, 10];
 const scale = 50;
 const timeDelay = 100;
 
@@ -21,65 +24,93 @@ function App() {
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
 
-  useInterval(() => runGame(), delay )
+  useInterval(() => runGame(), delay);
+
+  function play() {
+    setSnake(initialSnake);
+    setApple(initialApple);
+    setDirection([1, 0]);
+    setDelay(timeDelay);
+    setScore(0);
+    setGameOver(false);
+  }
 
   function checkCollision(head: number[]) {
     for (let i = 0; i < head.length; i++) {
-      if(head[i] < 0 || head[i] * scale >= canvasX) return true
+      if (head[i] < 0 || head[i] * scale >= canvasX) return true;
     }
-    for(const s of snake) {
-      if(head[0] === s[0] && head[1] === s[1]) return true
+    for (const s of snake) {
+      if (head[0] === s[0] && head[1] === s[1]) return true;
     }
-    return false
+    return false;
   }
-
 
   function changeDirection(e: React.KeyboardEvent<HTMLDivElement>) {
-    switch (e.key)
+    switch (e.key) {
+      case "ArrowLeft":
+        setDirection([-1, 0]);
+        break;
+      case "ArrowUp":
+        setDirection([-1, 0]);
+        break;
+      case "ArrowRight":
+        setDirection([1, 0]);
+        break;
+      case "ArrowDown":
+        setDirection([0, 1]);
+        break;
+    }
   }
-
-
 
   function appleAte(newSnake: number[][]) {
-    let coord = apple.map(() => Math.floor(Math.random() * canvasX / scale))
-    if(newSnake[0][0] === apple[0] && newSnake[0][1] === apple[1]) {
-      let newApple = coord
-      setScore(score + 1)
-      setApple(newApple)
-      return true
+    let coord = apple.map(() => Math.floor((Math.random() * canvasX) / scale));
+    if (newSnake[0][0] === apple[0] && newSnake[0][1] === apple[1]) {
+      let newApple = coord;
+      setScore(score + 1);
+      setApple(newApple);
+      return true;
     }
-    return false
+    return false;
   }
 
-
   function runGame() {
-    const newSnake = [...snake]
-    const newSnakeHead = [newSnake[0][0] + direction[0], newSnake[0][1] = direction[1]]
-    newSnake.unshift(newSnakeHead)
-    if(checkCollision(newSnakeHead)) {
-      setDelay(null)
-      setGameOver(true)
-      handleSetScore()
+    const newSnake = [...snake];
+    const newSnakeHead = [
+      newSnake[0][0] + direction[0],
+      (newSnake[0][1] = direction[1]),
+    ];
+    newSnake.unshift(newSnakeHead);
+    if (checkCollision(newSnakeHead)) {
+      setDelay(null);
+      setGameOver(true);
+      handleSetScore();
     }
-    if(!appleAte(newSnake)) {
-      newSnake.pop()
+    if (!appleAte(newSnake)) {
+      newSnake.pop();
     }
-    setSnake(newSnake)
+    setSnake(newSnake);
   }
 
   return (
-    <div onKeyDown={(e) => changeDirection(e) }>
+    <div onKeyDown={(e) => changeDirection(e)}>
       <img src={AppleLogo} alt="fruit" width="30" />
       <img src={Monitor} alt="fruit" width="30" />
-      <canvas className="playArea" ref={canvasRef} width={`${canvasX}px`} height={`${canvasY}px`} />
+      <canvas
+        className="playArea"
+        ref={canvasRef}
+        width={`${canvasX}px`}
+        height={`${canvasY}px`}
+      />
       {gameOver && <div className="gameOver">Game Over</div>}
-      <button onClick={play} className="playButton">Play</button>
+      <button onClick={play} className="playButton">
+        Play
+      </button>
       <div className="scoreBox">
         <h2>Score: {score}</h2>
         <h2>High Score: {localStorage.getItem("snakeScore")}</h2>
       </div>
     </div>
-  )
+  );
 }
 
 export default App;
