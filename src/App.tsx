@@ -1,5 +1,4 @@
-import React, { useState, useRef } from "react";
-import { reduceEachLeadingCommentRange } from "typescript";
+import React, { useEffect, useRef, useState } from "react";
 import "./App.css";
 import AppleLogo from "./applePixels.png";
 import Monitor from "./oldMonitor.png";
@@ -16,7 +15,7 @@ const scale = 50;
 const timeDelay = 100;
 
 function App() {
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [snake, setSnake] = useState(initialSnake);
   const [apple, setApple] = useState(initialApple);
   const [direction, setDirection] = useState([0, -1]);
@@ -25,6 +24,27 @@ function App() {
   const [score, setScore] = useState(0);
 
   useInterval(() => runGame(), delay);
+
+  useEffect(() => {
+    let fruit = document.getElementById("fruit") as HTMLCanvasElement;
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.setTransform(scale, 0, 0, scale, 0, 0);
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        ctx.fillStyle = "#a3d001";
+        snake.forEach(([x, y]) => ctx.fillRect(x, y, 1, 1));
+        ctx.drawImage(fruit, apple[0], apple[1], 1, 1);
+      }
+    }
+  }, [snake, apple, gameOver]);
+
+  function handleSetScore() {
+    if (score > Number(localStorage.getItem("snakeScore"))) {
+      localStorage.setItem("snakeScore", JSON.stringify(score));
+    }
+  }
 
   function play() {
     setSnake(initialSnake);
@@ -45,23 +65,6 @@ function App() {
     return false;
   }
 
-  function changeDirection(e: React.KeyboardEvent<HTMLDivElement>) {
-    switch (e.key) {
-      case "ArrowLeft":
-        setDirection([-1, 0]);
-        break;
-      case "ArrowUp":
-        setDirection([-1, 0]);
-        break;
-      case "ArrowRight":
-        setDirection([1, 0]);
-        break;
-      case "ArrowDown":
-        setDirection([0, 1]);
-        break;
-    }
-  }
-
   function appleAte(newSnake: number[][]) {
     let coord = apple.map(() => Math.floor((Math.random() * canvasX) / scale));
     if (newSnake[0][0] === apple[0] && newSnake[0][1] === apple[1]) {
@@ -77,7 +80,7 @@ function App() {
     const newSnake = [...snake];
     const newSnakeHead = [
       newSnake[0][0] + direction[0],
-      (newSnake[0][1] = direction[1]),
+      newSnake[0][1] + direction[1],
     ];
     newSnake.unshift(newSnakeHead);
     if (checkCollision(newSnakeHead)) {
@@ -91,10 +94,27 @@ function App() {
     setSnake(newSnake);
   }
 
+  function changeDirection(e: React.KeyboardEvent<HTMLDivElement>) {
+    switch (e.key) {
+      case "ArrowLeft":
+        setDirection([-1, 0]);
+        break;
+      case "ArrowUp":
+        setDirection([0, -1]);
+        break;
+      case "ArrowRight":
+        setDirection([1, 0]);
+        break;
+      case "ArrowDown":
+        setDirection([0, 1]);
+        break;
+    }
+  }
+
   return (
     <div onKeyDown={(e) => changeDirection(e)}>
-      <img src={AppleLogo} alt="fruit" width="30" />
-      <img src={Monitor} alt="fruit" width="30" />
+      <img id="fruit" src={AppleLogo} alt="fruit" width="30" />
+      <img src={Monitor} alt="fruit" width="4000" className="monitor" />
       <canvas
         className="playArea"
         ref={canvasRef}
